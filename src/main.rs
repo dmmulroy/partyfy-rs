@@ -41,19 +41,21 @@ fn main() {
     .unwrap();
 
     // TODO
-    // for party_color in COLORS.iter() {
-    //     for idx in [0..buffer.len()].iter().step_by(3) {
-    //         let mut pixel = &mut buffer[idx..idx + 3];
+    for party_color in COLORS.iter() {
+        for (idx, _) in [0..buffer.len()].iter().enumerate().step_by(3) {
+            let pixel = &mut buffer[idx..idx + 3];
 
-    //         let rgb_pixel = transformPixel(&RGB(pixel[0], pixel[1], pixel[2]), party_color, 60);
+            let rgb_pixel = transform_pixel(&RGB(pixel[0], pixel[1], pixel[2]), party_color, 60);
 
-    //         pixel[0] = rgb_pixel.0;
-    //     }
-    // }
+            pixel[0] = rgb_pixel.0;
+            pixel[1] = rgb_pixel.1;
+            pixel[2] = rgb_pixel.2;
+        }
 
-    let frame = gif::Frame::from_rgb(info.width as u16, info.height as u16, &buffer);
-
-    encoder.write_frame(&frame).unwrap();
+        let mut frame = gif::Frame::from_rgb(info.width as u16, info.height as u16, &buffer);
+        frame.delay = 75;
+        encoder.write_frame(&frame).unwrap();
+    }
 }
 
 fn mix(color: &RGB, overlayed_color: &RGB, opacity: u8) -> RGB {
@@ -135,6 +137,6 @@ fn grayscale(color: &RGB) -> RGB {
     RGB(gray_level, gray_level, gray_level)
 }
 
-fn transformPixel(pixel: &RGB, party_color: &RGB, opacity: u8) -> RGB {
+fn transform_pixel(pixel: &RGB, party_color: &RGB, opacity: u8) -> RGB {
     mix(&grayscale(pixel), party_color, opacity)
 }
